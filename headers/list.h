@@ -3,6 +3,9 @@
 #ifndef LIST_H_
 #define LIST_H_
 
+#include <iostream>
+
+
 template <class T>
 class List {
 
@@ -17,6 +20,7 @@ public:
     void push(T* data);
     void pop(int position);
     void pop();
+    int length();
     T *get(int position);
 };
 

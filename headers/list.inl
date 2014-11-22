@@ -1,9 +1,7 @@
-//Arquivo de corpo list.inl
+template <class T>
+List<T>::List(){}
 
-List<T>::List() {
-	this->data = NULL;
-}
-
+template <class T>
 void List<T>::push(T* data,int position){
     List<T> * current = this;
     while(current->next != NULL && position > 1){
@@ -16,7 +14,7 @@ void List<T>::push(T* data,int position){
     current->next = aux;
 }
 
-
+template <class T>
 void List<T>::push(T* data){
     List<T> * current = this;
     while(current->next != NULL){
@@ -26,18 +24,20 @@ void List<T>::push(T* data){
     current->next = new List();
 }
 
+template <class T>
 void List<T>::pop(int position){
     List<T> * current = this;
     List<T> * before = this;
-    while(curren->next != NULL && position > 1){
+    while(current->next != NULL && position > 1){
         before = current;
         current = current->next;
         position--;
     }
-    before->next = curren->next;
+    before->next = current->next;
 }
 
-T* List<T>::get(int pos) {
+template <class T>
+T* List<T>::get(int position) {
 	List<T> * current = this;
     while(current->next != NULL && position > 1){
        current = current->next;
@@ -46,6 +46,13 @@ T* List<T>::get(int pos) {
     return current->data;
 }
 
-List::~List() {
-    //dtor
+template <class T>
+int List<T>::length(){
+    int i = 0;
+    List<T> current = this;
+    while(current->next != NULL){
+        current = current->next;
+        i++;
+    }
+    return i;
 }

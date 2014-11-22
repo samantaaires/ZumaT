@@ -11,7 +11,7 @@ public:
 	int y;
 
 	//Métodos
-	Position(int x, int y);
+	Position(int, int);
 
 };
 

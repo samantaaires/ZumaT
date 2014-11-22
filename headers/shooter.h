@@ -7,7 +7,7 @@
 class Shooter{
 public:
 	//Atributos
-	Position *pos;
+	Position *position;
 	Item *item;
 
 	//Métodos

@@ -1,9 +1,7 @@
-//Arquivo de corpo position.h
-
-#include "position.cpp"
+#include "position.h"
 #include <iostream>
 
-Position::Position(int x, int y){
+Position::Position(int y, int x){
 	this->x = x;
 	this->y = y;
 }
