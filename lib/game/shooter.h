@@ -2,8 +2,10 @@
 
 #ifndef _SHOOTER_H_
 #define _SHOOTER_H_
-#include "item.h"
-#include "position.h"
+
+#include "game/item.h"
+#include "game/position.h"
+
 class Shooter{
 public:
 	//Atributos
@@ -11,7 +13,7 @@ public:
 	Item *item;
 
 	//Métodos
-	Shooter();
+	Shooter(int, int);
 	void reload(int type); // Recarrega a arma com um item aleatório;
 	Item* shoot(); // Lançar o item.
 	void moveLeft();

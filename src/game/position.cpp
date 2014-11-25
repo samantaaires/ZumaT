@@ -1,4 +1,4 @@
-#include "position.h"
+#include "game/position.h"
 #include <iostream>
 
 Position::Position(int y, int x){

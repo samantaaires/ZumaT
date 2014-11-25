@@ -1,9 +1,9 @@
 //Arquivo de corpo shooter.cpp
 
-#include "shooter.h"
+#include "game/shooter.h"
 
-Shooter::Shooter(){
-	this->position = new Position(0,0);
+Shooter::Shooter(int y, int x){
+	this->position = new Position(y,x);
 }
 
 void Shooter::reload(int type){

@@ -1,6 +1,6 @@
 //Arquivo de corpo item.inl
 
-#include "item.h"
+#include "game/item.h"
 #include <iostream>
 
 Item::Item(int type) {

@@ -3,17 +3,19 @@
 #ifndef LIST_H_
 #define LIST_H_
 
-#include <iostream>
-
+#include <cstddef>
+#include "node.h"
 
 template <class T>
 class List {
+private:
+    //Atributos
+    Node<T> * head;
+    int size;
+    
+
 
 public:
-    //Atributos
-    List *next;
-    T *data; //Tipo genérico de dados.
-
     //Métodos
     List();
     void push(T* data, int position);
