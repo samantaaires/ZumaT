@@ -10,20 +10,20 @@ template <class T>
 class List {
 private:
     //Atributos
-    Node<T> * head;
+    Node<T> * head; //Nó que é a cabeça.
     int size;
     
 
 
 public:
     //Métodos
-    List();
-    void push(T* data, int position);
-    void push(T* data);
-    void pop(int position);
+    List(); //Construtor
+    void push(T* data, int position); //Inserir em uma posição.
+    void push(T* data); 
+    void pop(int position); //Remover da posição.
     void pop();
-    int length();
-    T *get(int position);
+    int length(); //Retorna o tamanho da lista.
+    T *get(int position); //Retorna o item daquela posição.
 };
 
 #include "list.inl"

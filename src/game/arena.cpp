@@ -1,3 +1,6 @@
+//Arquivo de corpo arena.cpp
+
+
 #include "game/arena.h"
 
 Arena::Arena(char * filename){
@@ -10,22 +13,21 @@ Arena::Arena(char * filename){
 
 	int i = 0; //contador de linha
 
-	//LoadParametersFromFile
+	//Carregando os parâmetros do arquivo.
 	if (infile.is_open()){
 		while (std::getline(infile, line)){
-			std::stringstream iss(line);
+			std::stringstream iss(line); 
 			if (i == 0){ //linha 1 com altura e largura da arenas
 				iss >> this->height >> this->width;
 			}
-			if (i == 1){ //Linha 2 com tamanho inicial da lista de items
+			if (i == 1){ //Linha 2 com tamanho da lista de items
 				iss >> this->initial_size;
 			}
 			if (i == 2){ //Linha 3 com tamanho inicial que aparece na arena
 				iss >> this->show_size;
 			}
-			if (i > 2){ //Demais linhas com a arena
-				//Adiciona cada posição encontrada na arena
-				for(int j = 0; j < line.length(); j++){ 
+			if (i > 2){ //Demais linhas que contém o formato da arena.
+				for(int j = 0; j < line.length(); j++){ //Adiciona cada posição encontrada na arena.
 					if (line[j] == '@'){
 						this->addPosition(j, i-3);
 						this->i_x = j;
@@ -62,7 +64,7 @@ void Arena::addPosition(int x, int y){
 	path->push(pos);
 }
 
-//Ordena o caminha de forma que a primeira posição da lista é o começo e a ultima o fim
+//Ordena o caminha de forma que a primeira posição da lista é o começo e a ultima o fim.
 bool Arena::orderPath(){
 	List<Position> * aux = new List<Position>();
 	int x = this->i_x;
@@ -193,26 +195,23 @@ int Arena::checkShoot(int p){
 
 //Retorna um tipo de item contido na lista de itens
 int Arena::getRandomTypeFromItemPool(){
-	int p = this->items->length();
-	p = rand() % p+1;
-	return this->items->get(p)->getType();
+	int p = this->items->length(); //p recebe o tamanho da fila de itens.
+	p = rand() % p+1; //Faz um rand de acordo com os tipos de itens da lista.
+	return this->items->get(p)->getType(); //Retorna o item "selecionado".
 }
 
-//Ação de atirar com o shooter
-void Arena::shoot(){
-	//So atira se nao tiver nemhum outro item atirado na arena
+void Arena::shoot(){ //É para atirar com o shooter.
+	//So atira se nao tiver nemhum outro item atirado na arena, isto é, se a bolinha do atirador ainda estiver "voando" na arena, ele espera ela atingir a lista ou ir pra fora pra poder habilitar o atirador para atirar de novo.
 	if(this->shootedItem == NULL){
         this->shootedItem = this->shooter->shoot();
         this->shootedItemPosition = new Position(this->shooter->position->y, this->shooter->position->x);
     }
-	this->shooter->reload(getRandomTypeFromItemPool());
+	this->shooter->reload(getRandomTypeFromItemPool()); //O atirador é carregado com um item aleatório.
 }
 
 
-//Se o os items chegarem no fim o jogo acaba
-//Show size = localização dos itens
 bool Arena::gameEnded(){
-	return this->show_size >= this->path->length();
+	return this->show_size >= this->path->length(); //Se o os items chegarem no fim o jogo acaba.
 }
 
 int Arena::getPathLength(){

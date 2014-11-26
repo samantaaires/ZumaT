@@ -3,7 +3,7 @@
 #ifndef _POSITION_H_
 #define _POSITION_H_
 
-class Position{
+class Position{ //Classe que representa um ponto dentro da superfície.
 
 public:
 	//Atributos
@@ -11,7 +11,7 @@ public:
 	int y;
 
 	//Métodos
-	Position(int, int);
+	Position(int, int); //Construtor. Define os valores de x e y.
 
 };
 

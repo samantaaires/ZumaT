@@ -6,16 +6,16 @@
 #include "game/item.h"
 #include "game/position.h"
 
-class Shooter{
+class Shooter{ //Classe que representa o atirador.
 public:
 	//Atributos
-	Position *position;
-	Item *item;
+	Position *position; //Tem as coordenadas de onde ele tá.
+	Item *item; //Qual item irá atirar.
 
 	//Métodos
-	Shooter(int, int);
+	Shooter(int, int); //Construtor. Define os pontos x e y.
 	void reload(int type); // Recarrega a arma com um item aleatório;
-	Item* shoot(); // Lançar o item.
+	Item* shoot(); // Lança o item.
 	void moveLeft();
 	void moveRight();
 };

@@ -1,4 +1,4 @@
-//Arquivo de cabeçalho list.h
+//Arquivo de cabeçalho node.h
 
 #ifndef NODE_H_
 #define NODE_H_

@@ -1,4 +1,5 @@
-//Arquivo de cabeçalho item.h
+//Arquivo de cabeçalho game_engine.h
+
 #ifndef _GAMEENGINE_H_
 #define _GAMEENGINE_H_
 
@@ -14,7 +15,7 @@
 
 #include "game/arena.h"
 
-class GameEngine {  //Classe que representa as peças / bolinhas.
+class GameEngine {  
 	
 private:
 	//Atributos
@@ -41,7 +42,7 @@ private:
 
 public:
 	//Métodos
-	GameEngine(Arena*);
+	GameEngine(Arena*); //Construtor.
 	int start();
 	int start(int argc, char**);
 };

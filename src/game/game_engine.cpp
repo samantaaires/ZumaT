@@ -1,31 +1,33 @@
+//Arquivo de corpo game_engine.cpp
+
 #include "game/game_engine.h"
 
 GameEngine::GameEngine(Arena * arena){
     this->arena = arena;
     this->score = 0;
     this->timeToMove = 1.7; //Velocidade de movimento jogo
-    this->itemRenderSize = 4.0; //Tamanho do circulo que representa o item na allegro
-    this->gameOver = false; //Verificador se o jogo cabou
+    this->itemRenderSize = 5.0; //Tamanho do circulo que representa o item na allegro
+    this->gameOver = false; //Verifica se o jogo cabou
 }
 
-//Retorna uma cor baseado no tipo do item
+//Retorna uma cor baseada no tipo do item
 ALLEGRO_COLOR getItemColor(Item * item){
     switch (item->getType())
     {
         case 0:
-            return al_map_rgb(0, 0, 255);
+            return al_map_rgb(0, 0, 255); //azul
             break;
         case 1:
-            return al_map_rgb(34, 139, 34);
+            return al_map_rgb(34, 139, 34); //verde
             break;
         case 2:
-            return al_map_rgb(255, 255, 0);
+            return al_map_rgb(255, 255, 0); //amarela
             break;
         case 3: 
-            return al_map_rgb(255, 69, 0);
+            return al_map_rgb(255, 69, 0); //laranja
             break;
         case 4:
-            return al_map_rgb(255, 255, 255);
+            return al_map_rgb(255, 255, 255); //branco
             break;
     }
 }
@@ -174,7 +176,7 @@ int GameEngine::start () {
             begin_shoot = clock();
         }
         this->print();
-        al_flip_display();//função da allegro que nao sie o que faz
+        al_flip_display();//função da allegro que nao sei o que faz, mas estava no tutorial.
     }
     std::cout << "game over" << std::endl;
     al_destroy_display(janela);
@@ -183,8 +185,10 @@ int GameEngine::start () {
     return 0;
 }
 
-//Função para desbugar a allegro
-int GameEngine::start (int argc, char** argv){return 0;}
+//Função para "desbugar" a allegro. Por algum motivo só funciona se colocar assim.
+int GameEngine::start (int argc, char** argv){
+    return 0;
+}
 
 
 //Imprime tudo na allegro
@@ -231,7 +235,7 @@ void GameEngine::print(){
 
 //Quando o item colide com a lista na posição "p"
 bool GameEngine::checkShoot(int p){
-    //copia o item o insere na lista
+    //copia o item e o insere na lista
     Item * item = new Item(0);
     *item = *this->arena->shootedItem;
     this->arena->getItems()->push(item, p);

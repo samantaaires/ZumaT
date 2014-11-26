@@ -1,4 +1,4 @@
-//Arquivo de corpo item.inl
+//Arquivo de corpo item.cpp
 
 #include "game/item.h"
 #include <iostream>
