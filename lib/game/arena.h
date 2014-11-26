@@ -1,6 +1,8 @@
 #ifndef _ARENA_H_
 #define _ARENA_H_
 
+#include <stdlib.h>
+#include <time.h>     
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -31,7 +33,7 @@ public:
 	//Métodos
 	Arena(char*);
 	void addPosition(int, int);
-	void orderPath();
+	bool orderPath();
 	int searchPosition(int, int);
 	int checkShoot(int);
 	void shoot();
@@ -40,6 +42,9 @@ public:
 	int getWidth();
 	List<Item>* getItems();
 	Shooter * getShooter();
+	int getRandomTypeFromItemPool();
+	bool gameEnded();
+	int getPathLength();
 };
 
 

@@ -23,21 +23,27 @@ private:
 	 
 	ALLEGRO_DISPLAY *janela = NULL;
 	ALLEGRO_EVENT_QUEUE *fila_eventos = NULL;
-	ALLEGRO_BITMAP *fundo = NULL;
 	ALLEGRO_FONT *fonte = NULL;
-	bool inicialize();
+
 
 	Arena * arena;
 	int score;
+	double timeToMove;
+	double itemRenderSize;
+	bool gameOver;
+
+	bool inicialize();
+
+	void print();
+	bool checkShoot(int);
+	void missShoot();
+	int calculateScore(int);
 
 public:
 	//Métodos
 	GameEngine(Arena*);
 	int start();
 	int start(int argc, char**);
-	void print();
-	bool checkShoot(int);
-	void missShoot();
 };
 
 

@@ -3,9 +3,12 @@
 GameEngine::GameEngine(Arena * arena){
     this->arena = arena;
     this->score = 0;
+    this->timeToMove = 1.7; //Velocidade de movimento jogo
+    this->itemRenderSize = 4.0; //Tamanho do circulo que representa o item na allegro
+    this->gameOver = false; //Verificador se o jogo cabou
 }
 
-
+//Retorna uma cor baseado no tipo do item
 ALLEGRO_COLOR getItemColor(Item * item){
     switch (item->getType())
     {
@@ -86,22 +89,31 @@ bool GameEngine::inicialize(){
 
     return true;
 }
+
 int GameEngine::start () {
-    bool sair = false;
-    int tecla = 0;
-    clock_t begin = clock();
-    clock_t end = clock();
+    bool sair = false; //Verificador se o usuário apertou sair
+
+    //Relogio para contar o tempo e avançar os itens na arena
+    clock_t begin = clock(); 
+    clock_t end = clock(); 
+
+    //Relogio para contar o tempo e avançar o item atirado na arena
     clock_t begin_shoot = clock();
     clock_t end_shoot = clock();
-    double elapsed_secs;
+
+    //Variável para contabilizar o tempo
+    double elapsed_secs = 0.0;
 
 
+    std::cout << "iniializing allegro -";
     if (!inicialize()){
         return -1;
     }
+    std::cout << "done" << std::endl;
 
-    while (!sair)
-    {
+    while (!gameOver && !sair)
+    {   
+        //Loop de eventos da allegro
         while(!al_is_event_queue_empty(fila_eventos))
         {
             ALLEGRO_EVENT evento;
@@ -111,21 +123,22 @@ int GameEngine::start () {
             {
                 switch(evento.keyboard.keycode)
                 {
-                    case ALLEGRO_KEY_UP:
-                    tecla = 1;
-                    break;
-                    case ALLEGRO_KEY_DOWN:
-                    tecla = 2;
-                    break;
                     case ALLEGRO_KEY_LEFT:
-                    tecla = 3;
-                    break;
+                        if(this->arena->getShooter()->position->x > 0){
+                            this->arena->getShooter()->moveLeft();
+                        }
+                        break;
                     case ALLEGRO_KEY_RIGHT:
-                    tecla = 4;
-                    break;
+                        if(this->arena->getShooter()->position->x < this->arena->getWidth()){
+                            this->arena->getShooter()->moveRight();
+                        }
+                        break;
                     case ALLEGRO_KEY_SPACE:
-                    tecla = 5;
-                    break;
+                        //So atira se o jogo nao tiver acabado
+                        if(!this->arena->gameEnded()){
+                            this->arena->shoot();
+                        }
+                        break;
                 }
             }
             else if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
@@ -134,90 +147,80 @@ int GameEngine::start () {
             }
         }
 
-        if (tecla)
-        {
-
-            switch (tecla)
-            {
-                case 1:
-                    //"Seta para cima"
-                    break;
-                case 2:
-                    //"Seta para baixo");
-                    break;
-                case 3:
-                    //"Seta esquerda");
-                    if(this->arena->getShooter()->position->x > 0){
-                        this->arena->getShooter()->moveLeft();
-                    }
-                    break;
-                case 4:
-                    if(this->arena->getShooter()->position->x < this->arena->getWidth()){
-                        this->arena->getShooter()->moveRight();
-                    }
-                    //"Seta direita");
-                    break;
-                case 5:
-                    if(this->arena->shootedItem == NULL){
-                        this->arena->shootedItem = this->arena->getShooter()->shoot();
-                        this->arena->shootedItemPosition = new Position(this->arena->getShooter()->position->y, this->arena->getShooter()->position->x);
-                    }
-                    break;
-            }
-
-            tecla = 0;
-        }
+        //Algoritimo de avançar os itens na arena
         end = clock();
         elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-        if(elapsed_secs>1.7){
+        if(elapsed_secs>this->timeToMove){
             this->arena->show_size += 1;
+            //Se 1 item encostar no final puxa todos os itens
+            if(this->arena->gameEnded() && this->timeToMove > 0.1){
+                this->timeToMove = 0.1;
+            }
+            //Se o ultimo item passar pelo final finaliza o jogo
+            if(this->arena->show_size - this->arena->getItems()->length() > this->arena->getPathLength())
+                this->gameOver = true;
             begin = clock();
         }
+
+        //Algoritimo de avançar o item atirado
         end_shoot = clock();
         elapsed_secs = double(end_shoot - begin_shoot) / CLOCKS_PER_SEC;
         if(elapsed_secs>0.02 && this->arena->shootedItem){
             this->arena->shootedItemPosition->y--;
+            //se o item passar do limite superior da arena invoca o missShoot e libera o atirador
             if (this->arena->shootedItemPosition->y < 0){
                 this->missShoot();
             }
             begin_shoot = clock();
         }
         this->print();
-        al_flip_display();
+        al_flip_display();//função da allegro que nao sie o que faz
     }
-
+    std::cout << "game over" << std::endl;
     al_destroy_display(janela);
     al_destroy_event_queue(fila_eventos);
 
     return 0;
 }
+
+//Função para desbugar a allegro
 int GameEngine::start (int argc, char** argv){return 0;}
 
+
+//Imprime tudo na allegro
 void GameEngine::print(){
 
     al_clear_to_color(al_map_rgb(0,0,0));
     int height = this->arena->getHeight();
     int width = this->arena->getWidth();
 
+    //Procura a arena inteira
     for(int i = 0; i <= height; i++){
         for(int j = 0; j <= width; j++){
+
+            //Procura se a posição em questão é um caminho ou não
             int p = this->arena->searchPosition(j, i);
-            // std::cout << p;
+
             if (this->arena->shootedItem && this->arena->shootedItemPosition->x == j && this->arena->shootedItemPosition->y == i){
-                if(p <= this->arena->show_size && p > -1){
-                    if(this->checkShoot(this->arena->show_size-(p-1))){
-                    }
+                //Draw shooted item
+                if(p <= this->arena->show_size && p > -1 && this->arena->getItems()->length() > this->arena->show_size-(p-1)){
+                    //Se colidir com a lista de itens invoca GameEngine::checkShoot()
+                    if(this->checkShoot(this->arena->show_size-(p-1))){}
                     return;
                 }else{
-                    al_draw_filled_circle(LARGURA_TELA/width*j, ALTURA_TELA/height*i+10, 4.0,  getItemColor(this->arena->shootedItem));
+                    al_draw_filled_circle(LARGURA_TELA/width*j, ALTURA_TELA/height*i+10, itemRenderSize,  getItemColor(this->arena->shootedItem));
                 }
-            }else if (p <= this->arena->show_size && p > -1){
-                al_draw_filled_circle(LARGURA_TELA/width*j, ALTURA_TELA/height*i+10, 4.0,  getItemColor(this->arena->getItems()->get(this->arena->show_size-(p-1))));
+            }else if (p <= this->arena->show_size && p > -1 && this->arena->getItems()->length() > this->arena->show_size-(p-1)){
+                //Draw items
+                al_draw_filled_circle(LARGURA_TELA/width*j, ALTURA_TELA/height*i+10, itemRenderSize,  getItemColor(this->arena->getItems()->get(this->arena->show_size-(p-1))));
             }else if(j == this->arena->getShooter()->position->x && i == this->arena->getShooter()->position->y){
-                al_draw_filled_circle(LARGURA_TELA/width*j, ALTURA_TELA/height*i+10, 4.0,  al_map_rgb(255, 0, 255));
+                //Draw shooter
+                al_draw_filled_circle(LARGURA_TELA/width*j, ALTURA_TELA/height*i+10, itemRenderSize,  getItemColor(this->arena->getShooter()->shoot()));
             }else if (this->arena->e_x == j && this->arena->e_y == i ){
-                al_draw_filled_circle(LARGURA_TELA/width*j, ALTURA_TELA/height*i+10, 4.0,  al_map_rgb(255, 0, 255));
+                //Draw end of arena
+                al_draw_filled_circle(LARGURA_TELA/width*j, ALTURA_TELA/height*i+10, itemRenderSize,  al_map_rgb(255, 0, 255));
             }else if (p > -1){
+                //Draw path
                 al_draw_filled_circle(LARGURA_TELA/width*j, ALTURA_TELA/height*i+10, 1.0,  al_map_rgb(255, 255, 255));
             }
         }
@@ -226,24 +229,40 @@ void GameEngine::print(){
     }
 }
 
+//Quando o item colide com a lista na posição "p"
 bool GameEngine::checkShoot(int p){
+    //copia o item o insere na lista
     Item * item = new Item(0);
     *item = *this->arena->shootedItem;
     this->arena->getItems()->push(item, p);
     this->arena->shootedItem = NULL;
     this->arena->shootedItemPosition = NULL;
+    //Verifica se estorou algum item
     int blowed = this->arena->checkShoot(p);
     if (blowed > 0){
-        this->score += blowed*5;
+        //calcula a pontuação
+        this->score += this->calculateScore(blowed);
+        //se estourou diminui a quantidade de itens na arena pela quantidade estourada
         this->arena->show_size -= blowed;
         return true;
     }else{
+        //se nao estourar nada aumenta a quantidade de itens na arena em 1
         this->arena->show_size++;
         return false;
     }
 }
 
+//Evento chamado quando o usuário erro o tipo
 void GameEngine::missShoot(){
     this->arena->shootedItem = NULL;
     this->arena->shootedItemPosition = NULL;
+}
+
+//Função para calcular a pontuação baseado na quantidade de itens estourados
+int GameEngine::calculateScore(int blowed){
+    long factN = 1;
+    int i;
+    for (i = 1; i <= blowed; i++)
+       factN = factN * i;
+    return factN;
 }
